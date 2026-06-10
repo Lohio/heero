@@ -1,0 +1,936 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Heero · Ask v2 · Founders con runway + Dbyte/AWS</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300;9..144,400;9..144,500;9..144,600&family=JetBrains+Mono:wght@400;500;600&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0a0908;
+    --bg-alt:#13110f;
+    --bg-card:#16130f;
+    --ink:#f5efe6;
+    --ink-dim:#a9a195;
+    --ink-mute:#6b645a;
+    --line:#2a2620;
+    --line-soft:#1c1915;
+    --gold:#d4a574;
+    --gold-bright:#e8c89c;
+    --red:#ef4444;
+    --green:#22c55e;
+    --teal:#2dd4bf;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{
+    background:var(--bg);
+    color:var(--ink);
+    font-family:'Inter',system-ui,sans-serif;
+    line-height:1.65;
+    -webkit-font-smoothing:antialiased;
+  }
+  body::before{
+    content:'';
+    position:fixed;
+    inset:0;
+    background:radial-gradient(ellipse at 30% 0%,rgba(212,165,116,0.06) 0%,transparent 50%),
+               radial-gradient(ellipse at 80% 100%,rgba(45,212,191,0.04) 0%,transparent 50%);
+    pointer-events:none;
+    z-index:0;
+  }
+  .container{
+    max-width:780px;
+    margin:0 auto;
+    padding:0 28px;
+    position:relative;
+    z-index:1;
+  }
+
+  /* HEADER */
+  .header{padding:56px 0 32px;border-bottom:1px solid var(--line)}
+  .eyebrow{
+    font-family:'JetBrains Mono',monospace;
+    font-size:11px;
+    letter-spacing:0.16em;
+    text-transform:uppercase;
+    color:var(--gold);
+    margin-bottom:20px;
+    display:flex;
+    align-items:center;
+    gap:10px;
+  }
+  .eyebrow::before{
+    content:'';
+    width:24px;
+    height:1px;
+    background:var(--gold);
+  }
+  .version-tag{
+    display:inline-block;
+    padding:3px 10px;
+    background:rgba(45,212,191,0.1);
+    border:1px solid rgba(45,212,191,0.3);
+    color:var(--teal);
+    font-family:'JetBrains Mono',monospace;
+    font-size:9px;
+    letter-spacing:0.12em;
+    text-transform:uppercase;
+    border-radius:100px;
+    margin-left:8px;
+  }
+  h1.title{
+    font-family:'Fraunces',serif;
+    font-weight:400;
+    font-size:clamp(34px,5vw,52px);
+    line-height:1.08;
+    letter-spacing:-0.02em;
+    margin-bottom:20px;
+  }
+  h1.title em{
+    font-style:italic;
+    color:var(--gold);
+    font-weight:300;
+  }
+  .lede{
+    font-family:'Fraunces',serif;
+    font-weight:300;
+    font-size:18px;
+    line-height:1.55;
+    color:var(--ink-dim);
+    max-width:620px;
+  }
+
+  /* CHANGE LOG */
+  .changelog{
+    background:rgba(45,212,191,0.05);
+    border:1px solid rgba(45,212,191,0.15);
+    border-left:3px solid var(--teal);
+    padding:18px 22px;
+    margin:24px 0;
+    border-radius:2px;
+  }
+  .changelog-label{
+    font-family:'JetBrains Mono',monospace;
+    font-size:10px;
+    letter-spacing:0.14em;
+    text-transform:uppercase;
+    color:var(--teal);
+    margin-bottom:10px;
+  }
+  .changelog-item{
+    display:flex;
+    align-items:flex-start;
+    gap:10px;
+    padding:4px 0;
+    color:var(--ink-dim);
+    font-size:13px;
+    line-height:1.6;
+  }
+  .changelog-item::before{
+    content:'+';
+    color:var(--teal);
+    font-weight:700;
+    flex-shrink:0;
+  }
+  .changelog-item strong{color:var(--ink)}
+
+  /* SECTIONS */
+  section{padding:48px 0;border-bottom:1px solid var(--line)}
+  .section-num{
+    font-family:'JetBrains Mono',monospace;
+    font-size:11px;
+    letter-spacing:0.16em;
+    text-transform:uppercase;
+    color:var(--gold);
+    margin-bottom:14px;
+  }
+  h2.section-title{
+    font-family:'Fraunces',serif;
+    font-weight:400;
+    font-size:clamp(26px,3.8vw,36px);
+    line-height:1.15;
+    letter-spacing:-0.015em;
+    margin-bottom:14px;
+  }
+  h2.section-title em{
+    font-style:italic;
+    color:var(--gold);
+  }
+  .section-intro{
+    font-size:16px;
+    line-height:1.7;
+    color:var(--ink-dim);
+    margin-bottom:28px;
+  }
+
+  /* SPEECH BOX */
+  .speech{
+    background:linear-gradient(180deg,var(--bg-card) 0%,var(--bg-alt) 100%);
+    border:1px solid var(--line);
+    border-left:3px solid var(--gold);
+    border-radius:2px;
+    padding:24px 28px;
+    margin:18px 0;
+  }
+  .speech.hero{
+    border-left-width:4px;
+    box-shadow:0 0 40px rgba(212,165,116,0.08);
+  }
+  .speech-tag{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    padding-bottom:14px;
+    margin-bottom:16px;
+    border-bottom:1px dashed var(--line);
+    flex-wrap:wrap;
+    gap:8px;
+  }
+  .speech-duration{
+    font-family:'JetBrains Mono',monospace;
+    font-size:11px;
+    letter-spacing:0.12em;
+    text-transform:uppercase;
+    color:var(--gold);
+    display:flex;
+    align-items:center;
+    gap:8px;
+  }
+  .speech-duration::before{content:'⏱';font-size:14px}
+  .speech-context{
+    font-family:'JetBrains Mono',monospace;
+    font-size:10px;
+    color:var(--ink-mute);
+  }
+  .speech-text{
+    font-family:'Fraunces',serif;
+    font-size:17px;
+    line-height:1.7;
+    color:var(--ink);
+    font-weight:400;
+  }
+  .speech-text strong{color:var(--gold-bright);font-weight:500}
+  .speech-text em{font-style:italic;color:var(--gold)}
+
+  /* TRUTH BOX */
+  .truth{
+    background:var(--bg-card);
+    border:1px solid var(--line);
+    border-left:3px solid var(--gold);
+    padding:24px 28px;
+    margin:18px 0;
+    border-radius:2px;
+  }
+  .truth-num{
+    font-family:'Fraunces',serif;
+    font-size:34px;
+    font-weight:300;
+    color:var(--gold);
+    letter-spacing:-0.02em;
+    line-height:1;
+    margin-bottom:14px;
+  }
+  .truth-title{
+    font-family:'Fraunces',serif;
+    font-size:20px;
+    font-weight:500;
+    color:var(--ink);
+    margin-bottom:10px;
+    line-height:1.3;
+  }
+  .truth-body{
+    font-size:15px;
+    line-height:1.7;
+    color:var(--ink-dim);
+  }
+  .truth-body strong{color:var(--ink)}
+  .truth-body em{color:var(--gold-bright);font-style:italic}
+
+  /* TABLE */
+  table{
+    width:100%;
+    border-collapse:collapse;
+    margin:20px 0;
+    font-size:14px;
+  }
+  th{
+    text-align:left;
+    padding:12px 14px;
+    background:var(--bg-card);
+    border-bottom:1px solid var(--line);
+    font-family:'JetBrains Mono',monospace;
+    font-size:10px;
+    letter-spacing:0.12em;
+    text-transform:uppercase;
+    color:var(--gold);
+    font-weight:600;
+  }
+  td{
+    padding:12px 14px;
+    border-bottom:1px solid var(--line-soft);
+    color:var(--ink-dim);
+    vertical-align:top;
+  }
+  td strong{color:var(--ink)}
+  .row-highlight td{background:rgba(212,165,116,0.05)}
+  .row-highlight td strong{color:var(--gold-bright)}
+
+  /* QA BOX */
+  .qa{
+    background:var(--bg-card);
+    border:1px solid var(--line);
+    padding:20px 24px;
+    margin:14px 0;
+    border-radius:2px;
+  }
+  .qa-q{
+    font-family:'Fraunces',serif;
+    font-size:17px;
+    font-weight:500;
+    color:var(--ink);
+    margin-bottom:12px;
+    display:flex;
+    align-items:flex-start;
+    gap:12px;
+    line-height:1.35;
+  }
+  .qa-q::before{
+    content:'Q';
+    font-family:'JetBrains Mono',monospace;
+    font-size:11px;
+    color:var(--gold);
+    background:rgba(212,165,116,0.15);
+    width:24px;
+    height:24px;
+    border-radius:50%;
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    flex-shrink:0;
+    font-weight:600;
+    margin-top:2px;
+  }
+  .qa-a{
+    font-size:14px;
+    line-height:1.7;
+    color:var(--ink-dim);
+    padding-left:36px;
+  }
+  .qa-a strong{color:var(--ink)}
+  .qa-a em{font-style:italic;color:var(--gold-bright)}
+  .qa-trap{
+    margin-top:12px;
+    padding:10px 14px;
+    background:rgba(239,68,68,0.05);
+    border-left:2px solid var(--red);
+    margin-left:36px;
+    border-radius:0 2px 2px 0;
+    font-size:13px;
+    color:var(--ink-dim);
+  }
+  .qa-trap strong{color:var(--red)}
+
+  /* CARD GENERIC */
+  .card{
+    background:var(--bg-card);
+    border:1px solid var(--line);
+    padding:24px 28px;
+    margin:20px 0;
+    border-radius:2px;
+  }
+  .card h3{margin-top:0}
+
+  /* CALLOUT */
+  .callout{
+    background:rgba(212,165,116,0.06);
+    border:1px solid rgba(212,165,116,0.2);
+    border-left:3px solid var(--gold);
+    padding:20px 24px;
+    margin:24px 0;
+    border-radius:2px;
+  }
+  .callout-label{
+    font-family:'JetBrains Mono',monospace;
+    font-size:10px;
+    letter-spacing:0.12em;
+    text-transform:uppercase;
+    color:var(--gold);
+    margin-bottom:8px;
+  }
+  .callout p{color:var(--ink);font-size:14px;line-height:1.6;margin-bottom:8px}
+  .callout p:last-child{margin-bottom:0}
+  .callout strong{color:var(--gold-bright)}
+
+  /* WARNING */
+  .warning{
+    background:rgba(239,68,68,0.05);
+    border:1px solid rgba(239,68,68,0.15);
+    border-left:3px solid var(--red);
+    padding:18px 22px;
+    margin:18px 0;
+    border-radius:2px;
+  }
+  .warning-label{
+    font-family:'JetBrains Mono',monospace;
+    font-size:10px;
+    letter-spacing:0.12em;
+    text-transform:uppercase;
+    color:var(--red);
+    margin-bottom:8px;
+  }
+  .warning p{color:var(--ink);font-size:14px;line-height:1.6;margin:0}
+  .warning strong{color:var(--ink)}
+
+  /* DONT SAY BOX */
+  .dont-say{
+    background:rgba(239,68,68,0.05);
+    border:1px solid rgba(239,68,68,0.15);
+    border-left:3px solid var(--red);
+    padding:18px 22px;
+    margin:14px 0;
+    border-radius:2px;
+  }
+  .dont-say-item{
+    display:flex;
+    align-items:flex-start;
+    gap:10px;
+    padding:6px 0;
+    color:var(--ink-dim);
+    font-size:14px;
+    line-height:1.5;
+  }
+  .dont-say-item::before{
+    content:'✕';
+    color:var(--red);
+    font-weight:700;
+    flex-shrink:0;
+  }
+  .dont-say-item strong{color:var(--ink)}
+
+  /* COMPARISON BLOCK */
+  .compare{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:14px;
+    margin:16px 0;
+  }
+  .compare > div{
+    padding:18px 20px;
+    border-radius:2px;
+    border:1px solid var(--line);
+  }
+  .compare-wrong{
+    background:rgba(239,68,68,0.04);
+    border-color:rgba(239,68,68,0.2);
+  }
+  .compare-right{
+    background:rgba(45,212,191,0.04);
+    border-color:rgba(45,212,191,0.2);
+  }
+  .compare-label{
+    font-family:'JetBrains Mono',monospace;
+    font-size:10px;
+    letter-spacing:0.12em;
+    text-transform:uppercase;
+    margin-bottom:10px;
+  }
+  .compare-wrong .compare-label{color:var(--red)}
+  .compare-right .compare-label{color:var(--teal)}
+  .compare p{
+    font-family:'Fraunces',serif;
+    font-size:14px;
+    line-height:1.55;
+    color:var(--ink);
+    font-style:italic;
+    margin:0;
+  }
+
+  /* SIGNALS */
+  .signal{
+    display:flex;
+    align-items:flex-start;
+    gap:12px;
+    padding:14px 0;
+    border-bottom:1px solid var(--line-soft);
+  }
+  .signal:last-child{border-bottom:none}
+  .signal-num{
+    font-family:'Fraunces',serif;
+    font-size:20px;
+    font-weight:500;
+    color:var(--gold);
+    line-height:1;
+    flex-shrink:0;
+    width:32px;
+  }
+  .signal-text{
+    font-size:15px;
+    color:var(--ink-dim);
+    line-height:1.6;
+  }
+  .signal-text strong{color:var(--ink)}
+
+  /* MENTAL MODEL */
+  .mental-list{
+    list-style:none;
+    padding:0;
+    margin:18px 0;
+  }
+  .mental-list li{
+    display:flex;
+    align-items:flex-start;
+    gap:12px;
+    padding:8px 0;
+    font-size:15px;
+    color:var(--ink);
+    line-height:1.55;
+  }
+  .mental-list li::before{
+    content:'✓';
+    color:var(--teal);
+    font-weight:700;
+    font-size:16px;
+    flex-shrink:0;
+  }
+
+  /* PARAGRAPHS */
+  p{margin-bottom:14px;font-size:15px;color:var(--ink-dim);line-height:1.7}
+  p strong{color:var(--ink);font-weight:600}
+  p em{color:var(--gold-bright);font-style:italic}
+
+  h3{
+    font-family:'Fraunces',serif;
+    font-weight:500;
+    font-size:22px;
+    line-height:1.2;
+    color:var(--ink);
+    margin:36px 0 14px;
+    letter-spacing:-0.01em;
+  }
+  h4.subhead{
+    font-family:'Inter',sans-serif;
+    font-weight:600;
+    font-size:12px;
+    text-transform:uppercase;
+    letter-spacing:0.1em;
+    color:var(--gold);
+    margin:26px 0 10px;
+  }
+
+  /* FOOTER */
+  footer{
+    padding:48px 0 64px;
+    text-align:center;
+  }
+  footer p{
+    font-family:'JetBrains Mono',monospace;
+    font-size:11px;
+    letter-spacing:0.12em;
+    text-transform:uppercase;
+    color:var(--ink-mute);
+  }
+
+  @media print{
+    body{background:white;color:black}
+    body::before{display:none}
+    section{page-break-inside:avoid;border:none}
+  }
+  @media (max-width:640px){
+    .compare{grid-template-columns:1fr}
+  }
+</style>
+</head>
+<body>
+
+<div class="container">
+
+  <header class="header">
+    <div class="eyebrow">El Ask · Heero · XEBA 2026 <span class="version-tag">v2 · actualizado</span></div>
+    <h1 class="title">No estás pidiendo plata.<br>Estás ofreciendo <em>participación</em>.</h1>
+    <p class="lede">Versión actualizada del ask integrando founders con runway personal, infraestructura paga, partnership con Dbyte/AWS, y las respuestas a las preguntas trampa que vienen con ese setup.</p>
+
+    <div class="changelog">
+      <div class="changelog-label">Qué cambió en esta versión</div>
+      <div class="changelog-item"><strong>Speech principal:</strong> ahora integra runway personal + Dbyte/AWS</div>
+      <div class="changelog-item"><strong>Use of funds:</strong> reasignado de 55% sueldos a 35% canal + 18% sales</div>
+      <div class="changelog-item"><strong>Nueva sección:</strong> respuestas a "¿por qué levantan si no necesitan?"</div>
+      <div class="changelog-item"><strong>Posicionamiento:</strong> de "necesitamos plata" a "ofrecemos participación"</div>
+    </div>
+  </header>
+
+  <!-- LA TESIS CENTRAL -->
+  <section>
+    <div class="section-num">01 — La nueva narrativa</div>
+    <h2 class="section-title">El cambio mental <em>antes de cualquier conversación</em>.</h2>
+    <p class="section-intro">Lo más importante de esta versión NO es el speech actualizado. Es el cambio mental que tenés que hacer vos antes de entrar al evento. Sin ese cambio, las palabras no funcionan.</p>
+
+    <div class="truth">
+      <div class="truth-title">No estás pidiendo plata para sobrevivir. Estás ofreciendo participación en una empresa que va a crecer con o sin ellos.</div>
+      <div class="truth-body">Esto NO es discurso motivacional. Es la verdad de tu situación. <strong>Los 3 founders tenemos sueldos. La infraestructura está paga. Tenemos partnership con Dbyte para AWS. Hay 3 pilotos firmados.</strong> Esta empresa va a seguir construyéndose sí o sí. El capital es para <em>no llegar segundos</em>, no para no morir. Esa diferencia psicológica define todo el tono de la conversación.</div>
+    </div>
+
+    <div class="card">
+      <h3>Lo que cambia en tu lenguaje corporal</h3>
+      <div class="compare">
+        <div class="compare-wrong">
+          <div class="compare-label">Cuando "necesitás"</div>
+          <p>"Estamos buscando inversores. ¿Te interesaría escuchar nuestro pitch?"</p>
+        </div>
+        <div class="compare-right">
+          <div class="compare-label">Cuando "ofrecés"</div>
+          <p>"Estamos cerrando una pre-seed. Si tu tesis incluye LATAM SaaS o IA aplicada, deberíamos hablar."</p>
+        </div>
+      </div>
+      <p style="margin-top:16px"><strong>Misma situación. Otro animal completamente.</strong> El primero te pone en posición de favor recibido. El segundo te pone en posición de igualdad. Los mejores inversores eligen al segundo. Siempre.</p>
+    </div>
+  </section>
+
+  <!-- LA FRASE MAGICA -->
+  <section>
+    <div class="section-num">02 — El Speech</div>
+    <h2 class="section-title">La frase mágica <em>integrada</em>.</h2>
+    <p class="section-intro">Esta es la frase clave de 30 segundos que tenés que memorizar palabra por palabra. Integra todos los elementos: monto, hito, runway personal, Dbyte, pilotos, ventana competitiva y términos.</p>
+
+    <div class="speech hero">
+      <div class="speech-tag">
+        <div class="speech-duration">30 segundos · LA FRASE</div>
+        <div class="speech-context">Memorizá palabra por palabra</div>
+      </div>
+      <p class="speech-text">"Estamos cerrando una <strong>pre-seed de USD 300K</strong> para llegar a <strong>USD 25K MRR en 12 meses</strong>, validar el canal partners y prepararnos para Seed.</p>
+      <p class="speech-text" style="margin-top:12px"><em>Algo importante:</em> los 3 founders tenemos ingresos estables, la infra está paga, tenemos <strong>partnership AWS via Dbyte</strong>, y los 3 pilotos firmados están en activación con 4.500 empleados en pipeline.</p>
+      <p class="speech-text" style="margin-top:12px">Lo que levantamos <strong>no es para sobrevivir</strong> — es para no llegar segundos en una ventana competitiva de 18 meses contra Humand.</p>
+      <p class="speech-text" style="margin-top:12px">Tickets desde USD 25K, target close 31 de agosto."</p>
+    </div>
+
+    <div class="callout">
+      <div class="callout-label">Por qué esta frase cambia todo</div>
+      <p>Tiene <strong>7 elementos críticos</strong> en menos de 30 segundos:</p>
+      <p>① <strong>Monto preciso</strong> (USD 300K) · ② <strong>Hito medible</strong> (USD 25K MRR · 12 meses) · ③ <strong>Use of funds</strong> (canal partners + Seed prep) · ④ <strong>Eliminación riesgo de hambre</strong> (founders con sueldos) · ⑤ <strong>Reducción riesgo técnico</strong> (Dbyte/AWS) · ⑥ <strong>Validación de mercado</strong> (3 pilotos con 4.500 emp) · ⑦ <strong>Urgencia justificada</strong> (ventana 18 meses).</p>
+      <p>Los inversores deciden en estos 30 segundos si querer una segunda reunión. Esta frase contiene todo lo que necesitan para decir "sí, contame más".</p>
+    </div>
+
+    <div class="speech">
+      <div class="speech-tag">
+        <div class="speech-duration">15 segundos · versión corta</div>
+        <div class="speech-context">Para pasillos y networking party</div>
+      </div>
+      <p class="speech-text"><strong>"Pre-seed de USD 300K. Founders bootstrapped con sueldos, infra paga, 3 pilotos firmados con 4.500 empleados. Levantamos para acelerar canal partners, no para sobrevivir. Close fines de agosto, tickets desde 25K."</strong></p>
+    </div>
+
+    <div class="speech">
+      <div class="speech-tag">
+        <div class="speech-duration">60 segundos · cuando hay interés genuino</div>
+        <div class="speech-context">Después del "contame más"</div>
+      </div>
+      <p class="speech-text">Heero es onboarding con IA para PyMEs LATAM. Construimos lo que hoy las empresas hacen con Excel y WhatsApp — incorporar gente nueva sin perder los primeros 30 días.</p>
+      <p class="speech-text" style="margin-top:10px">Tenemos <strong>3 pilotos firmados en Q2</strong>: MailAmericas, WebPack y Galeon — 4.500 empleados en pipeline. <em>Los 3 founders tenemos trabajos estables, la infra está paga, y como AWS partners via Dbyte, nuestra escala tiene costo subsidiado.</em></p>
+      <p class="speech-text" style="margin-top:10px">Estamos cerrando una <strong>pre-seed de USD 300K, valuación post-money USD 3.5M</strong>. La plata va <strong>35% al canal partners, 18% a sales, 22% a un ingeniero senior, el resto a operaciones</strong>. Sin sueldos de founders — eso ya lo tenemos resuelto.</p>
+      <p class="speech-text" style="margin-top:10px">El hito en 12 meses es USD 25K MRR, suficiente para Seed Series A de USD 1.5-2M en Q3 del año que viene. <strong>Target close 31 de agosto.</strong></p>
+    </div>
+  </section>
+
+  <!-- USE OF FUNDS ACTUALIZADO -->
+  <section>
+    <div class="section-num">03 — Use of Funds v2</div>
+    <h2 class="section-title">USD 300K = <em>53% directo a growth</em>.</h2>
+    <p class="section-intro">Esta es la jugada psicológica más fuerte que tenés. Mientras la mayoría de los founders pide plata para sueldos (lo que los inversores ven con recelo), vos vas a pedir plata para construir distribución. Ese es el lenguaje que querés escuchar.</p>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Bucket</th>
+          <th style="width:60px">%</th>
+          <th style="width:80px">USD</th>
+          <th>Por qué</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr class="row-highlight">
+          <td><strong>Canal Partners + Marketing</strong></td>
+          <td><strong>35%</strong></td>
+          <td>105K</td>
+          <td>El motor de adquisición real. Programa de partners HR + LinkedIn Ads + producción de contenido. <em>Acá se gana o se pierde el modelo.</em></td>
+        </tr>
+        <tr>
+          <td><strong>Hire · Ingeniero Senior</strong></td>
+          <td>22%</td>
+          <td>66K</td>
+          <td>Un dev senior LATAM (USD 4-5K/mes) por 12-14 meses. Escala el código que armamos con Claude Code, agrega ownership técnico.</td>
+        </tr>
+        <tr class="row-highlight">
+          <td><strong>Sales / Partner Manager</strong></td>
+          <td><strong>18%</strong></td>
+          <td>54K</td>
+          <td>Alguien dedicado 100% a gestionar partners, cerrar deals enterprise, y hacer onboarding de cuentas. Crítico para el canal.</td>
+        </tr>
+        <tr>
+          <td><strong>Producto + Infra</strong></td>
+          <td>8%</td>
+          <td>24K</td>
+          <td><em>Bajó de 12% gracias a Dbyte/AWS.</em> Vercel Pro, Supabase Pro, Claude API, herramientas internas.</td>
+        </tr>
+        <tr>
+          <td><strong>Setup operativo</strong></td>
+          <td>6%</td>
+          <td>18K</td>
+          <td>Constitución legal (Inc/SAS), contabilidad mensual, abogado, compliance, herramientas administrativas.</td>
+        </tr>
+        <tr>
+          <td><strong>Buffer / contingencia</strong></td>
+          <td>11%</td>
+          <td>33K</td>
+          <td>Inversores valoran cuando esto se pide explícitamente. Da espacio para iterar sin morir.</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="callout">
+      <div class="callout-label">El mensaje implícito</div>
+      <p>Cuando ven este use of funds, el inversor lee:</p>
+      <p>→ <strong>"35% canal + 18% sales = 53% GROWTH"</strong>. Esto es lo que querían escuchar.</p>
+      <p>→ <strong>"22% engineering hire"</strong>. Producto sigue evolucionando.</p>
+      <p>→ <strong>0% sueldos founders</strong>. Compromiso demostrado por adelantado.</p>
+      <p>→ <strong>11% buffer + Dbyte subsidiando infra</strong>. Founders prudentes, no quemadores.</p>
+      <p>Esa lectura mental termina en <strong>"este equipo sabe lo que hace"</strong>. Y eso es exactamente lo que necesitás.</p>
+    </div>
+
+    <div class="warning">
+      <div class="warning-label">Cuidado con cómo lo decís</div>
+      <p>NUNCA digas <strong>"no usamos plata para sueldos"</strong>. Suena defensivo. Decí <strong>"los sueldos de founders están cubiertos con runway personal, así el capital va 100% a construir el negocio"</strong>. Misma realidad, narrativa positiva.</p>
+    </div>
+  </section>
+
+  <!-- LA PREGUNTA TRAMPA -->
+  <section>
+    <div class="section-num">04 — LA pregunta trampa</div>
+    <h2 class="section-title">"Si no necesitan plata, <em>¿por qué levantan?</em>"</h2>
+    <p class="section-intro">Esta es <strong>LA</strong> pregunta. Apenas digas que tenés sueldos y la infra paga, te la van a hacer. Si no tenés la respuesta perfecta memorizada, te marcaste un autogol. Acá está cómo manejarla.</p>
+
+    <div class="speech hero">
+      <div class="speech-tag">
+        <div class="speech-duration">La respuesta perfecta</div>
+        <div class="speech-context">Memorizar palabra por palabra</div>
+      </div>
+      <p class="speech-text"><strong>"Levantamos porque hay una ventana de 12 a 18 meses para construir el canal partners en LATAM antes que Humand sume onboarding con IA.</strong></p>
+      <p class="speech-text" style="margin-top:12px">Esa ventana no la podemos comprar con sueldos personales — la podemos comprar con <em>velocity</em>: marketing, partner manager dedicado, ingeniero senior.</p>
+      <p class="speech-text" style="margin-top:12px"><strong>La plata no es para sobrevivir; es para no llegar segundos.</strong> Y queremos hacerlo con los partners adecuados, no con cualquiera."</p>
+    </div>
+
+    <div class="card">
+      <h3>Por qué esta respuesta funciona</h3>
+      <p>Tiene los 4 elementos que el inversor pre-seed quiere escuchar:</p>
+      <p>① <strong>Timing concreto</strong> — "12-18 meses" no es vago, es accionable</p>
+      <p>② <strong>Razón competitiva</strong> — "antes que Humand" demuestra que entendés el contexto</p>
+      <p>③ <strong>Use of funds específico</strong> — "marketing, partner manager, ingeniero senior" es concreto</p>
+      <p>④ <strong>Selectividad de inversores</strong> — "con los partners adecuados, no con cualquiera" te posiciona como elegidor, no elegido</p>
+    </div>
+
+    <div class="warning">
+      <div class="warning-label">Lo que NUNCA decir como respuesta</div>
+      <p style="margin-top:8px"><strong>"Para crecer más rápido"</strong> → suena vago, no convence</p>
+      <p style="margin-top:8px"><strong>"Para contratar gente"</strong> → suena a quemar plata</p>
+      <p style="margin-top:8px"><strong>"Para no quedarnos sin runway"</strong> → contradice lo que recién dijiste</p>
+      <p style="margin-top:8px"><strong>"Porque los inversores nos dan validación"</strong> → suena inseguro y necesitado</p>
+    </div>
+  </section>
+
+  <!-- LA SEGUNDA TRAMPA -->
+  <section>
+    <div class="section-num">05 — La segunda trampa</div>
+    <h2 class="section-title">"Si tienen trabajos, <em>¿están full-time?</em>"</h2>
+    <p class="section-intro">Esta viene 30 segundos después de la anterior. Y es donde la mayoría de los founders se traba. La respuesta tiene que demostrar compromiso sin parecer un side project.</p>
+
+    <div class="speech">
+      <div class="speech-tag">
+        <div class="speech-duration">La respuesta correcta</div>
+        <div class="speech-context">Concreta + clara + comprometida</div>
+      </div>
+      <p class="speech-text">"Estamos en transición planificada. Yo dedico [X horas/semana] a Heero, Javi [X], Elias [X]. <strong>Una meta concreta de esta ronda es que los 3 pasemos a full-time en los próximos 60 a 90 días post-cierre.</strong></p>
+      <p class="speech-text" style="margin-top:12px">El runway personal nos da la <em>opción de hacerlo bien</em>, no la obligación de hacerlo desesperados. Nos permitió construir esto con mejores decisiones — sin ratera de cash, sin presión que distorsione el producto."</p>
+    </div>
+
+    <div class="card">
+      <h3>Las 3 cosas que esta respuesta logra</h3>
+      <p>→ <strong>Cuantifica el compromiso actual</strong> (horas concretas). No es ambiguo.</p>
+      <p>→ <strong>Promete el paso a full-time</strong> con timeline específico, condicionado al cierre.</p>
+      <p>→ <strong>Convierte la "debilidad" en fortaleza</strong>: el runway personal no es señal de duda, es señal de buenas decisiones.</p>
+    </div>
+
+    <div class="compare">
+      <div class="compare-wrong">
+        <div class="compare-label">Lo que matás el deal diciendo</div>
+        <p>"Lo hacemos a la noche y los fines de semana, pero estamos comprometidos."</p>
+      </div>
+      <div class="compare-right">
+        <div class="compare-label">Lo que cierra el deal</div>
+        <p>"Tenemos infraestructura financiera estable que nos permitió construir esto sin presión externa. Ahora pasamos a full-time."</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- DBYTE/AWS -->
+  <section>
+    <div class="section-num">06 — Dbyte / AWS</div>
+    <h2 class="section-title">Cómo posicionar el partnership <em>como ventaja real</em>.</h2>
+    <p class="section-intro">El partnership con Dbyte / AWS no es decorativo. Resuelve una objeción típica de inversores con SaaS B2B: "¿no van a quemar todo en cloud bills cuando escalen?". Acá está cómo usarlo en el pitch.</p>
+
+    <div class="speech">
+      <div class="speech-tag">
+        <div class="speech-duration">El statement Dbyte</div>
+        <div class="speech-context">Cuando preguntan por infra / escala</div>
+      </div>
+      <p class="speech-text">"Tenemos partnership activo con Dbyte como <strong>AWS Partner</strong>. Nuestro path de escala de infraestructura tiene <em>costo subsidiado</em> y soporte técnico directo. <strong>La plata no se va a quemar en cloud bills cuando crezcamos</strong> — los créditos AWS y la negociación de partner cubren los próximos 18-24 meses de escalado."</p>
+    </div>
+
+    <div class="card">
+      <h3>El sub-pitch para inversores técnicos</h3>
+      <p>Si el inversor tiene background técnico (CTO de antes, ingeniero, founder de SaaS), agregale esto:</p>
+      <p style="font-family:'Fraunces',serif;font-style:italic;color:var(--ink);font-size:16px;margin-top:14px">"Hoy estamos en Supabase + Vercel + Claude API, que es el stack óptimo para nuestra escala actual (under 10K MAUs). Cuando lleguemos a 50K+ empleados activos en plataforma, migramos componentes críticos a AWS via Dbyte — RDS, S3, CloudFront. Tenemos el roadmap arquitectónico definido y el costo modelado. No hay sorpresa técnica."</p>
+    </div>
+
+    <div class="callout">
+      <div class="callout-label">Tip de valuación</div>
+      <p>Si Dbyte te puede dar <strong>créditos AWS Activate</strong> (hasta USD 100K para startups), súmalos al "valor aportado" al inversor.</p>
+      <p>Un inversor que pone USD 300K viendo que tenés <strong>USD 100K en créditos AWS arriba</strong> calcula que su capital efectivo rinde como USD 400K. Eso es ROI percibido más alto = <strong>valuación defendible más alta</strong>.</p>
+      <p>Frase: <em>"Adicionalmente, contamos con USD 100K en créditos AWS via partnership con Dbyte, que extienden el valor efectivo de la ronda."</em></p>
+    </div>
+  </section>
+
+  <!-- LA MENTALIDAD DEL INVERSOR -->
+  <section>
+    <div class="section-num">07 — Cómo te ven ahora</div>
+    <h2 class="section-title">El modelo mental <em>que se forma en su cabeza</em>.</h2>
+    <p class="section-intro">Después de escuchar tu speech con runway + Dbyte + pilotos + ventana competitiva, esto es lo que el inversor está pensando mientras vos hablás:</p>
+
+    <ul class="mental-list">
+      <li><strong>Founders con runway personal</strong> = bajo riesgo de abandono</li>
+      <li><strong>Infra paga + Dbyte/AWS</strong> = bajo riesgo técnico de escala</li>
+      <li><strong>3 pilotos con 4.500 empleados</strong> = validación de mercado real</li>
+      <li><strong>Use of funds 53% growth</strong> = capital aplicado correctamente</li>
+      <li><strong>Ventana de 18 meses vs Humand</strong> = decisión urgente pero racional</li>
+      <li><strong>Hito claro (USD 25K MRR)</strong> = evaluable en próximo round</li>
+      <li><strong>Plan de full-time post-cierre</strong> = compromiso escalonado</li>
+    </ul>
+
+    <div class="callout">
+      <div class="callout-label">El veredicto que querés que tomen</div>
+      <p>De "high risk pre-seed bet" pasaste a <strong>"calculated investment con multiple checkpoints de validación"</strong>.</p>
+      <p>Es <strong>otro animal completamente</strong>. La probabilidad de cierre triplica.</p>
+    </div>
+  </section>
+
+  <!-- LAS 4 PREGUNTAS ACTUALIZADAS -->
+  <section>
+    <div class="section-num">08 — Las 4 preguntas</div>
+    <h2 class="section-title">Las que <em>siempre te van a hacer</em>.</h2>
+    <p class="section-intro">Memorizá las respuestas. Estas 4 preguntas vienen sí o sí.</p>
+
+    <div class="qa">
+      <div class="qa-q">¿Cuánto querés levantar?</div>
+      <div class="qa-a">"USD 300K. Ronda pre-seed. SAFE post-money cap <strong>USD 3.5M</strong>. Tickets desde USD 25K. <em>Plus USD 100K en créditos AWS vía Dbyte como valor adicional al capital.</em>"</div>
+    </div>
+
+    <div class="qa">
+      <div class="qa-q">¿En qué vas a usar la plata?</div>
+      <div class="qa-a">"<strong>35% canal partners + marketing, 22% un ingeniero senior, 18% partner manager, el resto en producto, operaciones y buffer.</strong> Los sueldos de founders están cubiertos con runway personal — el capital va 100% al negocio."</div>
+    </div>
+
+    <div class="qa">
+      <div class="qa-q">¿Cuánto runway te da?</div>
+      <div class="qa-a">"<strong>12 meses</strong> para llegar a USD 25K MRR. Pero con runway personal de los 3 founders, en realidad el horizonte de supervivencia es mucho más largo. El capital es para acelerar, no para sobrevivir."</div>
+    </div>
+
+    <div class="qa">
+      <div class="qa-q">¿Con quién más estás hablando?</div>
+      <div class="qa-a">"Tenemos conversaciones con <strong>[2-4 nombres concretos]</strong>. Algunas más avanzadas, otras tempranas. Vamos a cerrar con los que mejor entienden el mercado SMB LATAM."</div>
+      <div class="qa-trap"><strong>Trampa:</strong> Si decís "con nadie" parecés desesperado. Si decís "con 30 fondos" parecés mentiroso. <strong>2-4 nombres reales es el punto óptimo.</strong></div>
+    </div>
+  </section>
+
+  <!-- COSAS QUE NO DECIR -->
+  <section>
+    <div class="section-num">09 — Las trampas</div>
+    <h2 class="section-title">Lo que <em>nunca</em> hay que decir.</h2>
+    <p class="section-intro">Cada frase puede matar un deal en 5 segundos. Atención especial a las nuevas que aparecen ahora que tenés runway personal.</p>
+
+    <div class="dont-say">
+      <div class="dont-say-item"><strong>"Lo hacemos a la noche y los fines de semana"</strong> — suena a side project, mata el deal instantáneamente</div>
+      <div class="dont-say-item"><strong>"Total ya tenemos sueldos"</strong> — suena despreocupado, los inversores quieren hambre + estabilidad, no comodidad</div>
+      <div class="dont-say-item"><strong>"Si no levantamos, seguimos igual"</strong> — quita urgencia, hace que el inversor pierda interés</div>
+      <div class="dont-say-item"><strong>"Aceptamos cualquier valuación"</strong> — te bajan la valuación instantáneamente</div>
+      <div class="dont-say-item"><strong>"Necesitamos plata para marketing"</strong> — suena a quemar plata. Decí "canal de distribución"</div>
+      <div class="dont-say-item"><strong>"Tenemos un competidor pero..."</strong> — siempre afirmativo. Decí "Humand validó el mercado, vamos a otro segmento"</div>
+      <div class="dont-say-item"><strong>"¿Cuándo decidís?"</strong> — ellos manejan el timing. Decí "el close de la ronda es 31 de agosto"</div>
+      <div class="dont-say-item"><strong>"Es lo mejor que armamos"</strong> — falta confianza. Decí "es la mejor solución para el problema"</div>
+    </div>
+  </section>
+
+  <!-- SEÑALES DE INTERES REAL -->
+  <section>
+    <div class="section-num">10 — Filtros</div>
+    <h2 class="section-title">Cómo saber si <em>realmente</em> está interesado.</h2>
+    <p class="section-intro">Si en 5 días no hace 2 de estas 4, no está interesado. Avanzá con otros.</p>
+
+    <div class="signal">
+      <div class="signal-num">01</div>
+      <div class="signal-text"><strong>Te da próxima reunión con fecha y hora concreta</strong> — no "te llamo cuando pueda".</div>
+    </div>
+
+    <div class="signal">
+      <div class="signal-num">02</div>
+      <div class="signal-text"><strong>Te pregunta por métricas específicas</strong> — CAC, LTV, churn, retention, payback. Si te pide el cap table, está evaluando en serio.</div>
+    </div>
+
+    <div class="signal">
+      <div class="signal-num">03</div>
+      <div class="signal-text"><strong>Te pide hablar con Javi y Elias</strong> — está evaluando si el equipo entero puede ejecutar, no solo vos. Señal fuerte.</div>
+    </div>
+
+    <div class="signal">
+      <div class="signal-num">04</div>
+      <div class="signal-text"><strong>Te conecta con alguien de su network</strong> — cuando un inversor pone su reputación detrás de una intro, es la señal más fuerte que existe.</div>
+    </div>
+  </section>
+
+  <!-- MENTALIDAD FINAL -->
+  <section style="border-bottom:none">
+    <div class="section-num">11 — El recordatorio final</div>
+    <h2 class="section-title">Antes de salir de tu casa el 11 de junio.</h2>
+
+    <div class="truth">
+      <div class="truth-num">01</div>
+      <div class="truth-title">Tres pilotos firmados es mucho más de lo que tienen los demás.</div>
+      <div class="truth-body">La mayoría de los founders en pre-seed están vendiendo una idea. <strong>Vos vendés 3 pilotos firmados con 4.500 empleados en pipeline + runway personal + Dbyte/AWS</strong>. Eso te pone arriba del 90% de la mesa. <em>Caminá con esa confianza.</em></div>
+    </div>
+
+    <div class="truth">
+      <div class="truth-num">02</div>
+      <div class="truth-title">Tu mejor pitch es que NO necesitás cerrar.</div>
+      <div class="truth-body">Los inversores invierten en founders que <strong>van a construir con o sin ellos</strong>. Cuando muestres que tu empresa subsiste solo, vas a cerrar más rápido y a mejor valuación que cualquier startup que esté pidiendo plata para no morir. <em>La paradoja es real: el founder que menos necesita es el que mejor levanta.</em></div>
+    </div>
+
+    <div class="truth">
+      <div class="truth-num">03</div>
+      <div class="truth-title">El "no" no es personal. El "sí" no es certificación.</div>
+      <div class="truth-body">Los inversores se equivocan todo el tiempo. Rechazaron Airbnb, Stripe, Slack. <strong>Si recibís un "no", no significa que tu empresa esté mal — significa que no encajó con su tesis o su momento.</strong> Y si recibís un "sí" tampoco significa que tengas razón en todo — solo significa que esa persona también ve la oportunidad. Movete con esa certeza.</div>
+    </div>
+
+    <div class="callout">
+      <div class="callout-label">El recordatorio práctico antes del evento</div>
+      <p>① Memorizá <strong>la frase de 30 segundos</strong> hasta que te salga automática.</p>
+      <p>② Coordinen con Javi y Elias la <strong>valuación post-money (USD 3.5M)</strong> antes del miércoles.</p>
+      <p>③ Conseguí los <strong>2-3 nombres reales</strong> para responder "¿con quién más estás hablando?".</p>
+      <p>④ Hacé un <strong>simulacro</strong>: que Javi o Elias te pregunten "¿por qué levantan si no necesitan plata?" y respondé. Repetí hasta que salga sin dudar.</p>
+    </div>
+  </section>
+
+  <footer>
+    <p>Heero · Ask v2 · Junio 2026</p>
+  </footer>
+
+</div>
+
+</body>
+</html>
